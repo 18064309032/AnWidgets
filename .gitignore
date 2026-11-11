@@ -29,6 +29,7 @@ shiboken_*.cpp
 # VS Code / Trae
 .vscode/
 .trae/
+.vs/
 *.code-workspace
 
 # OS

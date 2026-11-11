@@ -6,14 +6,13 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QGroupBox>
-#include <QSplitter>
 #include <QDebug>
 
 #include "antypedef.h"
 #include "anthememanager.h"
 #include "anpushbutton.h"
 
-// ── 自绘 Card 容器（演示 ThemeManager 用法）──
+// ── 自绘 Card ──
 class AnCard : public QFrame
 {
     Q_OBJECT
@@ -39,7 +38,7 @@ protected:
     }
 };
 
-// ── 自绘 GroupBox 标题文字（用主题色）──
+// ── 自绘 GroupBox ──
 class AnGroupBox : public QGroupBox
 {
     Q_OBJECT
@@ -58,20 +57,17 @@ protected:
         p.setRenderHint(QPainter::Antialiasing);
         auto &tm = AnThemeManager::instance();
 
-        // 边框
         QRect r = rect().adjusted(1, 1, -1, -1);
         p.setPen(QPen(tm.color(AnThemeColor::Border), 1));
         p.setBrush(Qt::NoBrush);
         p.drawRoundedRect(r, 8, 8);
 
-        // 标题背景（盖住边框上方）
         QFontMetrics fm(font());
         int titleW = fm.horizontalAdvance(title()) + 16;
         int titleH = fm.height();
         QRect titleBg(16, 0, titleW, titleH);
         p.fillRect(titleBg, tm.color(AnThemeColor::Background));
 
-        // 标题文字
         p.setPen(tm.color(AnThemeColor::TextPrimary));
         p.drawText(titleBg.adjusted(8, 0, -8, 0), Qt::AlignVCenter, title());
     }
@@ -87,32 +83,14 @@ int main(int argc, char *argv[])
 
     auto &tm = AnThemeManager::instance();
 
-    // ── 主窗口背景（用 QSS，最简单的一层）──
-    QString qss;
-    qss += QString("QMainWindow { background: %1; }").arg(tm.color(AnThemeColor::Background).name());
-    qss += QString("QLabel { color: %1; }").arg(tm.color(AnThemeColor::TextPrimary).name());
-    qss += QString(
-        "QComboBox {"
-        "  background: %1; color: %2; border: 1px solid %3;"
-        "  border-radius: 4px; padding: 6px 12px; min-width: 140px;"
-        "}"
-        "QComboBox:hover { border-color: %4; }"
-        "QComboBox::drop-down { border: none; width: 20px; }"
-    ).arg(
-        tm.color(AnThemeColor::Input).name(),
-        tm.color(AnThemeColor::TextPrimary).name(),
-        tm.color(AnThemeColor::Border).name(),
-        tm.color(AnThemeColor::Primary).name()
-    );
-    a.setStyleSheet(qss);
-
-    // 主题切换时更新 QSS
-    QObject::connect(&tm, &AnThemeManager::themeChanged,
-                     [&tm, &a]() {
-        QString newQss;
-        newQss += QString("QMainWindow { background: %1; }").arg(tm.color(AnThemeColor::Background).name());
-        newQss += QString("QLabel { color: %1; }").arg(tm.color(AnThemeColor::TextPrimary).name());
-        newQss += QString(
+    // ── 基础 QSS（只设窗口背景和 ComboBox）──
+    auto refreshQss = [&]() {
+        QString qss;
+        qss += QString("QMainWindow { background: %1; }")
+                   .arg(tm.color(AnThemeColor::Background).name());
+        qss += QString("QLabel { color: %1; }")
+                   .arg(tm.color(AnThemeColor::TextPrimary).name());
+        qss += QString(
             "QComboBox {"
             "  background: %1; color: %2; border: 1px solid %3;"
             "  border-radius: 4px; padding: 6px 12px; min-width: 140px;"
@@ -124,8 +102,10 @@ int main(int argc, char *argv[])
             tm.color(AnThemeColor::Border).name(),
             tm.color(AnThemeColor::Primary).name()
         );
-        a.setStyleSheet(newQss);
-    });
+        a.setStyleSheet(qss);
+    };
+    refreshQss();
+    QObject::connect(&tm, &AnThemeManager::themeChanged, refreshQss);
 
     QWidget *central = new QWidget(&w);
     w.setCentralWidget(central);
@@ -134,7 +114,7 @@ int main(int argc, char *argv[])
     root->setContentsMargins(32, 24, 32, 24);
     root->setSpacing(20);
 
-    // ── 标题行 ──
+    // 标题
     QLabel *title = new QLabel("🎨 AnWidgets Demo — 全自绘控件");
     QFont titleFont;
     titleFont.setPointSize(20);
@@ -142,7 +122,7 @@ int main(int argc, char *argv[])
     title->setFont(titleFont);
     root->addWidget(title);
 
-    // ── 主题切换 ──
+    // 主题切换
     QHBoxLayout *switchRow = new QHBoxLayout();
     switchRow->addWidget(new QLabel("主题："));
     QComboBox *themeCombo = new QComboBox();
@@ -155,16 +135,14 @@ int main(int argc, char *argv[])
 
     QObject::connect(themeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
                      [](int index) {
-        tm.applyPreset(static_cast<AnTheme>(index));
-        qDebug() << "主题切换到:" << tm.currentTheme();
+        AnThemeManager::instance().applyPreset(static_cast<AnTheme>(index));
     });
 
-    // ── 按钮区域 ──
+    // 按钮区
     AnGroupBox *btnGroup = new AnGroupBox("AnPushButton 三种类型", central);
     QVBoxLayout *btnLayout = new QVBoxLayout(btnGroup);
     btnLayout->setSpacing(12);
 
-    // Primary 行
     QHBoxLayout *row1 = new QHBoxLayout();
     row1->addWidget(new QLabel("Primary："));
     AnPushButton *p1 = new AnPushButton("确定");
@@ -180,7 +158,6 @@ int main(int argc, char *argv[])
     row1->addStretch();
     btnLayout->addLayout(row1);
 
-    // Secondary 行
     QHBoxLayout *row2 = new QHBoxLayout();
     row2->addWidget(new QLabel("Secondary："));
     AnPushButton *s1 = new AnPushButton("取消");
@@ -196,7 +173,6 @@ int main(int argc, char *argv[])
     row2->addStretch();
     btnLayout->addLayout(row2);
 
-    // Ghost 行
     QHBoxLayout *row3 = new QHBoxLayout();
     row3->addWidget(new QLabel("Ghost："));
     AnPushButton *g1 = new AnPushButton("文字链接");
@@ -210,7 +186,7 @@ int main(int argc, char *argv[])
 
     root->addWidget(btnGroup);
 
-    // ── Card 演示 ──
+    // Card
     AnCard *card = new AnCard(central);
     QVBoxLayout *cardLayout = new QVBoxLayout(card);
     cardLayout->setContentsMargins(24, 20, 24, 20);
@@ -222,7 +198,6 @@ int main(int argc, char *argv[])
     cardTitleFont.setBold(true);
     cardTitle->setFont(cardTitleFont);
     cardLayout->addWidget(cardTitle);
-
     cardLayout->addWidget(new QLabel("这是一个完全自绘的卡片容器，Surface + Border 圆角 10px。"));
     cardLayout->addWidget(new QLabel("所有颜色从 ThemeManager 取，切主题自动刷新。"));
 
@@ -239,7 +214,6 @@ int main(int argc, char *argv[])
     root->addWidget(card);
     root->addStretch();
 
-    // 初始主题
     tm.applyPreset(AnTheme::Light);
     themeCombo->setCurrentIndex(0);
 

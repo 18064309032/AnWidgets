@@ -135,18 +135,18 @@ void AnPushButton::drawBackground(QPainter &p)
         }
     }
 
-    // 画背景
-    QRect r = rect().adjusted(1, 1, -1, -1);
-    p.setBrush(bg);
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(r, m_radius, m_radius);
+    // 一次画完背景 + 边框（避免两次绘制错位）
+    // 边框 pen 居中绘制，所以矩形要内缩 penW/2 让 pen 刚好落在按钮边缘
+    int penW = drawBorder ? 1 : 0;
+    QRectF r = QRectF(rect()).adjusted(penW * 0.5, penW * 0.5, -penW * 0.5, -penW * 0.5);
 
-    // 画边框（Secondary 需要）
+    p.setBrush(bg);
     if (drawBorder) {
-        p.setBrush(Qt::NoBrush);
-        p.setPen(QPen(border, 1));
-        p.drawRoundedRect(r, m_radius, m_radius);
+        p.setPen(QPen(border, penW));
+    } else {
+        p.setPen(Qt::NoPen);
     }
+    p.drawRoundedRect(r, m_radius, m_radius);
 }
 
 void AnPushButton::drawText(QPainter &p)

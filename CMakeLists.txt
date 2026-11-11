@@ -7,13 +7,31 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC OFF)
 
+# MSVC 用 UTF-8 解析源文件（中文注释不炸）
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
+
+# Qt 查找：优先 CMAKE_PREFIX_PATH / Qt5_DIR，否则自动探测
+if(NOT CMAKE_PREFIX_PATH AND NOT Qt5_DIR)
+    foreach(_qt_dir
+        "C:/Qt/5.15.2/msvc2019_64"
+        "D:/Qt/5.15.2/msvc2019_64"
+        "C:/Qt/5.15.2/msvc2017_64"
+        "D:/Qt/Qt5.15.2/5.15.2/msvc2019_64"
+    )
+        if(EXISTS "${_qt_dir}/lib/cmake/Qt5/Qt5Config.cmake")
+            set(CMAKE_PREFIX_PATH "${_qt_dir}")
+            break()
+        endif()
+    endforeach()
+endif()
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
-# ════════ 动态库（默认）════════
-option(AN_WIDGETS_BUILD_SHARED "Build shared library" ON)
+# ════════ 库类型（默认静态，最省事）════════
+option(AN_WIDGETS_BUILD_SHARED "Build shared library (OFF=static)" OFF)
 option(AN_WIDGETS_BUILD_DEMO "Build demo application" ON)
 
-# 源文件
 set(AN_WIDGETS_SOURCES
     anthememanager.cpp
     anthememanager.h
@@ -36,7 +54,6 @@ target_include_directories(AnWidgets PUBLIC
 
 target_link_libraries(AnWidgets PUBLIC Qt5::Widgets)
 
-# Demo
 if(AN_WIDGETS_BUILD_DEMO)
-    add_subdirectory(demo)
+    add_subdirectory(examples)
 endif()

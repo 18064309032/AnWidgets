@@ -1,6 +1,8 @@
 #ifndef	AN_TYPEDEF_H
 #define AN_TYPEDEF_H
 
+#include <QHash>
+
 enum class AnTheme
 {
     Light,
@@ -33,14 +35,20 @@ enum class AnThemeColor
 
     // ════════ 状态 ════════
     Success,
-	Info,
-	Warning,
-	Error,
+    Info,
+    Warning,
+    Error,
 
     // ════════ 图标 ════════
     IconPrimary,
-	IconSecondary,
-	IconOnAccent
+    IconSecondary,
+    IconOnAccent
 };
+
+// QHash 需要 qHash 重载 —— 直接转 int 就行
+inline uint qHash(AnThemeColor key, uint seed = 0) noexcept
+{
+    return ::qHash(static_cast<int>(key), seed);
+}
 
 #endif // AN_TYPEDEF_H
