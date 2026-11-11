@@ -38,6 +38,9 @@ private:
 	AnThemeManager();
 	
 private:
+	void initThemeColors();
+	
+private:
 	AnTheme m_currentTheme;
 	QHash<AnThemeColor, QColor> m_overrides;
 	QHash<AnThemeColor, QColor> m_lightColors;

@@ -18,6 +18,8 @@ set(AN_WIDGETS_SOURCES
     anthememanager.cpp
     anthememanager.h
     antypedef.h
+    anpushbutton.cpp
+    anpushbutton.h
 )
 
 if(AN_WIDGETS_BUILD_SHARED)
