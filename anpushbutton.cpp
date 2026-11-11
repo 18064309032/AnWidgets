@@ -4,33 +4,33 @@
 AnPushButton::AnPushButton(QWidget *parent)
     : QPushButton(parent)
 {
-    connect(&AnThemeManager::instance(), &AnThemeManager::themeChanged,
-            this, &AnPushButton::onThemeChanged);
+    connect(&AnThemeManager::instance(), &AnThemeManager::themeChanged, this, &AnPushButton::onThemeChanged);
 }
 
 AnPushButton::AnPushButton(const QString &text, QWidget *parent)
     : QPushButton(text, parent)
 {
-    connect(&AnThemeManager::instance(), &AnThemeManager::themeChanged,
-            this, &AnPushButton::onThemeChanged);
+    connect(&AnThemeManager::instance(), &AnThemeManager::themeChanged, this, &AnPushButton::onThemeChanged);
 }
 
-void AnPushButton::setButtonType(AnButtonType type)
+void AnPushButton::setAppearance(Appearance appearance)
 {
-    if (m_type != type) {
-        m_type = type;
+    if (m_appearance != appearance)
+    {
+        m_appearance = appearance;
         update();
     }
 }
 
-AnButtonType AnPushButton::buttonType() const
+AnPushButton::Appearance AnPushButton::appearance() const
 {
-    return m_type;
+    return m_appearance;
 }
 
 void AnPushButton::setRadius(int radius)
 {
-    if (m_radius != radius) {
+    if (m_radius != radius)
+    {
         m_radius = radius;
         update();
     }
@@ -81,69 +81,102 @@ void AnPushButton::paintEvent(QPaintEvent *event)
 
 void AnPushButton::drawBackground(QPainter &p)
 {
-    auto &tm = AnThemeManager::instance();
-
     bool enabled = isEnabled();
     bool pressed = isDown();
     bool hovered = underMouse();
 
-    QColor bg;
-    QColor border;
+    QColor backgroundColor;
+    QColor borderColor;
     bool   drawBorder = false;
 
-    // ── Primary ──
-    if (m_type == AnButtonType::Primary) {
-        if (!enabled) {
-            bg = tm.color(AnThemeColor::Disabled);
-        } else if (pressed) {
-            bg = tm.color(AnThemeColor::Pressed);
-        } else if (hovered) {
-            bg = tm.withAlpha(AnThemeColor::Primary, 220);
-        } else {
-            bg = tm.color(AnThemeColor::Primary);
+    /**
+     * ── Primary ──
+     */
+    if (m_appearance == Appearance::Primary)
+    {
+        if (!enabled)
+        {
+            backgroundColor = AnThemeManager::instance().color(AnThemeColor::Disabled);
+        }
+        else if (pressed)
+        {
+            backgroundColor = AnThemeManager::instance().color(AnThemeColor::Pressed);
+        }
+        else if (hovered)
+        {
+            backgroundColor = AnThemeManager::instance().withAlpha(AnThemeColor::Primary, 220);
+        }
+        else
+        {
+            backgroundColor = AnThemeManager::instance().color(AnThemeColor::Primary);
         }
     }
 
-    // ── Secondary ──
-    else if (m_type == AnButtonType::Secondary) {
+    /**
+     * ── Secondary ──
+     */
+    else if (m_appearance == Appearance::Secondary)
+    {
         drawBorder = true;
-        if (!enabled) {
-            bg     = tm.color(AnThemeColor::Disabled);
-            border = tm.color(AnThemeColor::Border);
-        } else if (pressed) {
-            bg     = tm.withAlpha(AnThemeColor::Pressed, 30);
-            border = tm.color(AnThemeColor::Primary);
-        } else if (hovered) {
-            bg     = tm.color(AnThemeColor::Hover);
-            border = tm.color(AnThemeColor::Primary);
-        } else {
-            bg     = Qt::transparent;
-            border = tm.color(AnThemeColor::Border);
+        if (!enabled)
+        {
+            backgroundColor = AnThemeManager::instance().color(AnThemeColor::Disabled);
+            borderColor = AnThemeManager::instance().color(AnThemeColor::Border);
+        }
+        else if (pressed)
+        {
+            backgroundColor = AnThemeManager::instance().withAlpha(AnThemeColor::Pressed, 30);
+            borderColor = AnThemeManager::instance().color(AnThemeColor::Primary);
+        }
+        else if (hovered)
+        {
+            backgroundColor = AnThemeManager::instance().color(AnThemeColor::Hover);
+            borderColor = AnThemeManager::instance().color(AnThemeColor::Primary);
+        }
+        else
+        {
+            backgroundColor = Qt::transparent;
+            borderColor = AnThemeManager::instance().color(AnThemeColor::Border);
         }
     }
 
-    // ── Ghost ──
-    else if (m_type == AnButtonType::Ghost) {
-        if (!enabled) {
-            bg = Qt::transparent;
-        } else if (pressed) {
-            bg = tm.withAlpha(AnThemeColor::Pressed, 20);
-        } else if (hovered) {
-            bg = tm.color(AnThemeColor::Hover);
-        } else {
-            bg = Qt::transparent;
+    /**
+     * ── Ghost ──
+     */
+    else if (m_appearance == Appearance::Ghost)
+    {
+        if (!enabled)
+        {
+            backgroundColor = Qt::transparent;
+        }
+        else if (pressed)
+        {
+            backgroundColor = AnThemeManager::instance().withAlpha(AnThemeColor::Pressed, 20);
+        }
+        else if (hovered)
+        {
+            backgroundColor = AnThemeManager::instance().color(AnThemeColor::Hover);
+        }
+        else
+        {
+            backgroundColor = Qt::transparent;
         }
     }
 
-    // 一次画完背景 + 边框（避免两次绘制错位）
-    // 边框 pen 居中绘制，所以矩形要内缩 penW/2 让 pen 刚好落在按钮边缘
+    /**
+     * 一次画完背景 + 边框（避免两次绘制错位）
+     * 边框 pen 居中绘制，所以矩形要内缩 penW/2 让 pen 刚好落在按钮边缘
+     */
     int penW = drawBorder ? 1 : 0;
     QRectF r = QRectF(rect()).adjusted(penW * 0.5, penW * 0.5, -penW * 0.5, -penW * 0.5);
 
-    p.setBrush(bg);
-    if (drawBorder) {
-        p.setPen(QPen(border, penW));
-    } else {
+    p.setBrush(backgroundColor);
+    if (drawBorder)
+    {
+        p.setPen(QPen(borderColor, penW));
+    }
+    else
+    {
         p.setPen(Qt::NoPen);
     }
     p.drawRoundedRect(r, m_radius, m_radius);
@@ -151,30 +184,51 @@ void AnPushButton::drawBackground(QPainter &p)
 
 void AnPushButton::drawText(QPainter &p)
 {
-    auto &tm = AnThemeManager::instance();
-
     bool enabled = isEnabled();
     bool hovered = underMouse();
 
     QColor textColor;
 
-    // ── Primary ──
-    if (m_type == AnButtonType::Primary) {
-        textColor = enabled ? tm.color(AnThemeColor::TextOnAccent)
-                            : tm.color(AnThemeColor::TextDisabled);
+    /**
+     * ── Primary ──
+     */
+    if (m_appearance == Appearance::Primary)
+    {
+        textColor = enabled ? AnThemeManager::instance().color(AnThemeColor::TextOnAccent) : AnThemeManager::instance().color(AnThemeColor::TextDisabled);
     }
 
-    // ── Secondary ──
-    else if (m_type == AnButtonType::Secondary) {
-        if (!enabled)        textColor = tm.color(AnThemeColor::TextDisabled);
-        else                 textColor = tm.color(AnThemeColor::TextPrimary);
+    /**
+     * ── Secondary ──
+     */
+    else if (m_appearance == Appearance::Secondary)
+    {
+        if (!enabled)
+        {
+            textColor = AnThemeManager::instance().color(AnThemeColor::TextDisabled);
+        }
+        else
+        {
+            textColor = AnThemeManager::instance().color(AnThemeColor::TextPrimary);
+        }
     }
 
-    // ── Ghost ──
-    else if (m_type == AnButtonType::Ghost) {
-        if (!enabled)                    textColor = tm.color(AnThemeColor::TextDisabled);
-        else if (hovered)                textColor = tm.color(AnThemeColor::Primary);
-        else                             textColor = tm.color(AnThemeColor::TextPrimary);
+    /**
+     * ── Ghost ──
+     */
+    else if (m_appearance == Appearance::Ghost)
+    {
+        if (!enabled)
+        {
+            textColor = AnThemeManager::instance().color(AnThemeColor::TextDisabled);
+        }
+        else if (hovered)
+        {
+            textColor = AnThemeManager::instance().color(AnThemeColor::Primary);
+        }
+        else
+        {
+            textColor = AnThemeManager::instance().color(AnThemeColor::TextPrimary);
+        }
     }
 
     p.setPen(textColor);

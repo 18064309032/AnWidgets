@@ -1,5 +1,6 @@
-#include "anthememanager.h"
 #include <QColor>
+
+#include "anthememanager.h"
 
 AnThemeManager::AnThemeManager()
     : QObject(nullptr)

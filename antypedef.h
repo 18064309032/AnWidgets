@@ -45,7 +45,12 @@ enum class AnThemeColor
     IconOnAccent
 };
 
-// QHash 需要 qHash 重载 —— 直接转 int 就行
+/**
+ * @brief 计算主题颜色角色的哈希值，供 QHash 使用。
+ * @param key 要计算哈希值的颜色角色。
+ * @param seed 哈希种子。
+ * @return 计算得到的哈希值。
+ */
 inline uint qHash(AnThemeColor key, uint seed = 0) noexcept
 {
     return ::qHash(static_cast<int>(key), seed);

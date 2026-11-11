@@ -38,6 +38,69 @@ set(AN_WIDGETS_SOURCES
     antypedef.h
     anpushbutton.cpp
     anpushbutton.h
+    anlineedit.cpp
+    anlineedit.h
+    anprogressbar.cpp
+    anprogressbar.h
+    ancheckbox.cpp
+    ancheckbox.h
+    ancombobox.cpp
+    ancomboboxitemdelegate.h
+    ancomboboxitemdelegate.cpp
+    ancomboboxscrollbarstyle.h
+    ancomboboxscrollbarstyle.cpp
+    ancombobox.h
+    anradiobutton.cpp
+    anradiobutton.h
+    anspinbox.h
+    anspinbox.cpp
+    andoublespinbox.h
+    andoublespinbox.cpp
+    anspinboxeditorstyle.h
+    anspinboxeditorstyle.cpp
+    anslider.h
+    anslider.cpp
+    anmenu.h
+    anmenu.cpp
+    anmenustyle.h
+    anmenustyle.cpp
+    antoolbutton.h
+    antoolbutton.cpp
+    anplaintextedit.h
+    anplaintextedit.cpp
+    anlistview.h
+    anlistview.cpp
+    anlistviewitemdelegate.h
+    anlistviewitemdelegate.cpp
+    anmessagebox.h
+    anmessagebox.cpp
+    ancard.h
+    ancard.cpp
+    answitch.h
+    answitch.cpp
+    antabwidget.h
+    antabwidget.cpp
+    antabbar.h
+    antabbar.cpp
+    ansegmentedcontrol.h
+    ansegmentedcontrol.cpp
+    antaskcard.h
+    antaskcard.cpp
+    anwindow.h
+    anwindow.cpp
+    antitlebar.h
+    antitlebar.cpp
+    ancaptionbutton.h
+    ancaptionbutton.cpp
+    anthemedlabel_p.h
+    aneditorcoloreffect_p.h
+    aneditorcoloreffect.cpp
+    anavatarcard.h
+    anavatarcard.cpp
+    annavigationbar.h
+    annavigationbar.cpp
+    annavigationitem.h
+    annavigationitem.cpp
 )
 
 if(AN_WIDGETS_BUILD_SHARED)
