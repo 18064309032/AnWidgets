@@ -1,0 +1,58 @@
+{
+  "version": 4,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "win-x64-debug",
+      "displayName": "Windows x64 Debug",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/../AnWidgets-Build",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": "/MP"
+        }
+      }
+    },
+    {
+      "name": "win-x64-release",
+      "displayName": "Windows x64 Release",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/../AnWidgets-Build",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": "/MP"
+        }
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "win-x64-debug-build",
+      "displayName": "Windows x64 Debug",
+      "configurePreset": "win-x64-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "win-x64-release-build",
+      "displayName": "Windows x64 Release",
+      "configurePreset": "win-x64-release",
+      "configuration": "Release"
+    }
+  ]
+}

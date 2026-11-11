@@ -1,0 +1,40 @@
+# Build
+build/
+out/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.user
+*.userosscache
+*.sln.docstates
+
+# Qt
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+automoc_*.cpp
+shiboken_*.cpp
+
+# DLL / LIB
+*.dll
+*.lib
+*.pdb
+*.exe
+
+# VS Code / Trae
+.vscode/
+.trae/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Presets（本机配置，不提交）
+CMakeUserPresets.json
